@@ -15,7 +15,10 @@ RUN npm install --omit=dev && \
 FROM node:22-bookworm-slim AS nextjs
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Use a minimal package.json to avoid self-referencing exports
+# (the repo package.json has name "thepopebot", which makes Node resolve
+# imports like 'thepopebot/config' to ./config/ instead of node_modules)
+RUN echo '{"private":true}' > package.json
 COPY web/ ./
 RUN ./node_modules/.bin/next build
 
@@ -38,7 +41,7 @@ RUN npm install -g pm2
 
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+RUN echo '{"private":true}' > package.json
 COPY --from=nextjs /app/.next ./.next
 COPY web/server.js web/next.config.mjs web/instrumentation.js web/middleware.js web/postcss.config.mjs ./
 
