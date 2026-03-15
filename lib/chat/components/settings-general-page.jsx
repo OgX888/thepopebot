@@ -137,7 +137,7 @@ export function SettingsGeneralPage({ session }) {
                 onClick={async () => {
                   setEmailSigningUp(true);
                   try {
-                    await fetch('https://app.convertkit.com/forms/9208367/subscriptions', {
+                    await fetch('https://app.convertkit.com/forms/9126548/subscriptions', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                       body: 'email_address=' + encodeURIComponent(emailAddress),
