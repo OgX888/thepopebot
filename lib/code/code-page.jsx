@@ -97,7 +97,7 @@ export default function CodePage({ session, codeWorkspaceId }) {
 
   const fetchDiffStats = useCallback(async () => {
     try {
-      const r = await fetch(`/stream/workspace-diff/${codeWorkspaceId}`);
+      const r = await fetch(`/code/workspace-diff/${codeWorkspaceId}`);
       const data = await r.json();
       if (data.success) { setDiffStats(data); return data; }
     } catch {}

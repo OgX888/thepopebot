@@ -30,4 +30,20 @@ Key files: `schema.js` (source of truth), `drizzle/` (generated migrations), `dr
 | `subscriptions` | Channel subscriptions (platform, channel_id) |
 | `clusters` | Worker clusters (user_id, name, system_prompt, folders, enabled, starred) |
 | `cluster_roles` | Role definitions scoped to a cluster (cluster_id, role_name, role, trigger_config, max_concurrency, cleanup_worker_dir, folders) |
-| `settings` | Key-value configuration store (also stores API keys via type/key/value) |
+| `settings` | Key-value configuration store (also stores API keys and OAuth tokens via type/key/value) |
+
+## OAuth Token Storage
+
+`lib/db/oauth-tokens.js` manages encrypted OAuth tokens for coding agent backends. Tokens are stored in the `settings` table with `type: 'config_secret'`.
+
+**Token types** (`TOKEN_KEYS` map):
+- `claudeCode` → `CLAUDE_CODE_OAUTH_TOKEN`
+- `codex` → `CODEX_OAUTH_TOKEN`
+
+**Key functions**: `createOAuthToken(tokenType, name, rawToken, userId)`, `listOAuthTokens(tokenType)`, `getNextOAuthToken(tokenType)` (LRU rotation — picks least-recently-used, updates `lastUsedAt`), `deleteOAuthTokenById(id)`, `getOAuthTokenCount(tokenType)`.
+
+**Encryption**: `lib/db/crypto.js` provides AES-256-GCM encryption using `AUTH_SECRET` as the key derivation source (PBKDF2, 100k iterations). Token values are stored as JSON `{name, token}` where `token` is the encrypted ciphertext.
+
+## Notable Columns
+
+- `codeWorkspaces.codingAgent` — defaults to `'claude-code'`. Selects which agent backend runs in the workspace (claude-code, pi, gemini-cli, codex-cli, opencode).

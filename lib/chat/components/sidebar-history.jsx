@@ -6,7 +6,7 @@ import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu } fro
 import { useChatNav } from './chat-nav-context.js';
 import { deleteChat, renameChat, starChat } from '../actions.js';
 import { cn } from '../utils.js';
-import { MessageIcon, CodeIcon } from './icons.js';
+import { AgentIcon, CodeIcon } from './icons.js';
 
 
 function groupChatsByDate(chats) {
@@ -49,7 +49,7 @@ function groupChatsByDate(chats) {
 
 const BASE_FILTERS = [
   { value: 'all', label: 'All', icon: null },
-  { value: 'chat', label: 'Chat', icon: MessageIcon },
+  { value: 'chat', label: 'Agent', icon: AgentIcon },
 ];
 const CODE_FILTER = { value: 'code', label: 'Code', icon: CodeIcon };
 
@@ -89,7 +89,7 @@ export function SidebarHistory() {
 
   const loadChats = async () => {
     try {
-      const r = await fetch('/stream/chats?limit=51');
+      const r = await fetch('/chats/list?limit=51');
       const result = await r.json();
       if (result.length > 50) {
         setChats(result.slice(0, 50));

@@ -60,6 +60,7 @@ export default function TerminalView({ codeWorkspaceId, wsPath, isActive = true,
   const [termTheme, setTermTheme] = useState('dark');
   const [voiceDialogOpen, setVoiceDialogOpen] = useState(false);
   const [voiceText, setVoiceText] = useState('');
+  const [partialText, setPartialText] = useState('');
   const voiceDialogRef = useRef(null);
   const volumeRef = useRef(0);
 
@@ -72,6 +73,7 @@ export default function TerminalView({ codeWorkspaceId, wsPath, isActive = true,
         return prev + (needsSpace ? ' ' : '') + text;
       });
     },
+    onPartialTranscript: (text) => setPartialText(text),
     onError: (err) => console.error('[voice]', err),
   });
 
@@ -343,6 +345,7 @@ export default function TerminalView({ codeWorkspaceId, wsPath, isActive = true,
 
   const closeVoiceDialog = useCallback(() => {
     setVoiceDialogOpen(false);
+    setPartialText('');
     if (isRecording) stopRecording();
   }, [isRecording, stopRecording]);
 
@@ -350,6 +353,7 @@ export default function TerminalView({ codeWorkspaceId, wsPath, isActive = true,
     const text = voiceText.trim();
     if (text) sendCommand(text);
     setVoiceText('');
+    setPartialText('');
     closeVoiceDialog();
   }, [voiceText, sendCommand, closeVoiceDialog]);
 
@@ -699,8 +703,8 @@ export default function TerminalView({ codeWorkspaceId, wsPath, isActive = true,
                     <div className="code-voice-dialog">
                       <textarea
                         rows={6}
-                        value={voiceText}
-                        onChange={(e) => setVoiceText(e.target.value)}
+                        value={voiceText + (partialText ? (voiceText && !voiceText.endsWith(' ') ? ' ' : '') + partialText : '')}
+                        onChange={(e) => { setVoiceText(e.target.value); setPartialText(''); }}
                         placeholder="Listening..."
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && !e.shiftKey) {
@@ -720,7 +724,7 @@ export default function TerminalView({ codeWorkspaceId, wsPath, isActive = true,
                         <button
                           className="code-voice-submit"
                           onClick={handleVoiceSubmit}
-                          disabled={!voiceText.trim()}
+                          disabled={!voiceText.trim() && !partialText.trim()}
                         >
                           Submit
                         </button>

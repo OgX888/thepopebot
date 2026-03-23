@@ -1,4 +1,5 @@
-FROM coding-agent-base
+ARG BASE_IMAGE=coding-agent-base
+FROM ${BASE_IMAGE}
 
 USER root
 

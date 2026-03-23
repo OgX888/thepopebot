@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { PageLayout } from './page-layout.js';
-import { MessageIcon, CodeIcon, TrashIcon, SearchIcon, PlusIcon, MoreHorizontalIcon, StarIcon, StarFilledIcon, PencilIcon } from './icons.js';
+import { AgentIcon, CodeIcon, TrashIcon, SearchIcon, PlusIcon, MoreHorizontalIcon, StarIcon, StarFilledIcon, PencilIcon } from './icons.js';
 import { getChats, deleteChat, renameChat, starChat } from '../actions.js';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './ui/dropdown-menu.js';
 import { ConfirmDialog } from './ui/confirm-dialog.js';
@@ -13,7 +13,7 @@ const isCodeChat = (chat) => chat.chatMode === 'code';
 
 const BASE_FILTERS = [
   { value: 'all', label: 'All', icon: null },
-  { value: 'chat', label: 'Chat', icon: MessageIcon },
+  { value: 'chat', label: 'Agent', icon: AgentIcon },
 ];
 const CODE_FILTER = { value: 'code', label: 'Code', icon: CodeIcon };
 
@@ -317,7 +317,7 @@ function ChatRow({ chat, onNavigate, onDelete, onStar, onRename }) {
           <CodeIcon size={16} />
           {chat.hasChanges ? <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-destructive" /> : null}
         </span>
-      ) : <MessageIcon size={16} />}
+      ) : <AgentIcon size={16} />}
       <div className="flex-1 min-w-0">
         {editing ? (
           <input

@@ -54,7 +54,7 @@ export function ChatPage({ session, needsSetup, chatId }) {
   // Load messages and workspace data when activeChatId changes
   useEffect(() => {
     if (activeChatId) {
-      fetch(`/stream/chat-messages/${activeChatId}`)
+      fetch(`/chat/${activeChatId}/messages`)
         .then(r => r.json())
         .then(async (dbMessages) => {
           if (dbMessages.length === 0) {
@@ -98,7 +98,7 @@ export function ChatPage({ session, needsSetup, chatId }) {
 
           // Check if this is a code chat
           try {
-            const r = await fetch(`/stream/chat-data/${activeChatId}`);
+            const r = await fetch(`/chat/${activeChatId}/data`);
             const chat = await r.json();
             setWorkspace(chat?.workspace || null);
           } catch {

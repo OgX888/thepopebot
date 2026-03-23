@@ -2,6 +2,29 @@
 
 JSX components for the chat UI. Compiled to `.js` by `npm run build` (esbuild).
 
+## Admin Navigation
+
+Admin pages live under `/admin/` with two top-level sections:
+
+- **`/admin/event-handler/`** — Event handler config with pill-style sub-tabs via `SubTabLayout` (`settings-secrets-layout.jsx`):
+  - `/admin/event-handler/llms` — LLM provider credentials
+  - `/admin/event-handler/chat` — Chat LLM settings
+  - `/admin/event-handler/coding-agents` — Multi-agent config (5 backends)
+  - `/admin/event-handler/jobs` — Agent job custom secrets
+  - `/admin/event-handler/telegram` — Telegram integration
+  - `/admin/event-handler/voice` — Voice input (AssemblyAI)
+  - `/admin/event-handler/webhooks` — Webhook secret
+- **Other admin pages**: `/admin/api-keys`, `/admin/github`, `/admin/users`, `/admin/crons`, `/admin/triggers`, `/admin/general`
+
+## Key Component Pages
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `CodingAgentsPage` | `settings-coding-agents-page.jsx` | Multi-agent config — 5 agent cards with enable/disable, auth mode, model selection |
+| `JobsPage` | `settings-jobs-page.jsx` | Custom env vars for agent job containers |
+| `ContainersPage` | `containers-page.jsx` | Live Docker container monitoring via SSE (`/stream/containers`) |
+| `ChatsPage` | `chats-page.jsx` | Full chat history with search, bulk actions |
+
 ## Tool Display Names
 
 `tool-names.js` auto-generates display names from the tool's snake_case name (split on `_`, capitalize each word). No map to maintain — adding a new tool automatically gets a display name.

@@ -24,7 +24,7 @@ Set these in your `.env` file:
 | `OPENAI_API_KEY` | Required for `openai` provider |
 | `GOOGLE_API_KEY` | Required for `google` provider |
 | `CUSTOM_API_KEY` | Required for `custom` provider (if the endpoint needs auth) |
-| `OPENAI_BASE_URL` | Custom OpenAI-compatible base URL (for `custom` provider, e.g. `http://localhost:11434/v1`) |
+| `CUSTOM_OPENAI_BASE_URL` | Custom OpenAI-compatible base URL (for `custom` provider, e.g. `http://localhost:11434/v1`) |
 
 Example `.env` snippet:
 
@@ -72,7 +72,7 @@ ANTHROPIC_API_KEY=sk-ant-...
 ```bash
 npx thepopebot set-var LLM_PROVIDER custom
 npx thepopebot set-var LLM_MODEL qwen3:8b
-npx thepopebot set-var OPENAI_BASE_URL http://host.docker.internal:11434/v1
+npx thepopebot set-var CUSTOM_OPENAI_BASE_URL http://host.docker.internal:11434/v1
 npx thepopebot set-var RUNS_ON self-hosted
 ```
 
@@ -95,7 +95,7 @@ Add `llm_provider` and `llm_model` to any agent-type entry in `config/CRONS.json
 
 The matching API key must already exist as a GitHub secret (see the Providers table below).
 
-> **Using `custom` on individual crons:** `llm_provider` and `llm_model` travel with the job, but `OPENAI_BASE_URL`, `RUNS_ON`, and `CUSTOM_API_KEY` are repo-level settings — they must be set as GitHub variables/secrets even if your default provider is something else. See [Using the `custom` Provider](#using-the-custom-provider) below.
+> **Using `custom` on individual crons:** `llm_provider` and `llm_model` travel with the job, but `CUSTOM_OPENAI_BASE_URL`, `RUNS_ON`, and `CUSTOM_API_KEY` are repo-level settings — they must be set as GitHub variables/secrets even if your default provider is something else. See [Using the `custom` Provider](#using-the-custom-provider) below.
 
 ## Providers
 
@@ -117,7 +117,7 @@ Point at the provider's endpoint and add your API key:
 ```bash
 npx thepopebot set-var LLM_PROVIDER custom
 npx thepopebot set-var LLM_MODEL deepseek-chat
-npx thepopebot set-var OPENAI_BASE_URL https://api.deepseek.com/v1
+npx thepopebot set-var CUSTOM_OPENAI_BASE_URL https://api.deepseek.com/v1
 ```
 
 Then set the API key as a GitHub secret:
@@ -136,7 +136,7 @@ For a model running on your own machine you need a [self-hosted runner](https://
 npx thepopebot set-var RUNS_ON self-hosted
 npx thepopebot set-var LLM_PROVIDER custom
 npx thepopebot set-var LLM_MODEL qwen3:8b
-npx thepopebot set-var OPENAI_BASE_URL http://host.docker.internal:11434/v1
+npx thepopebot set-var CUSTOM_OPENAI_BASE_URL http://host.docker.internal:11434/v1
 ```
 
 Most local servers don't need an API key. If yours does, set `AGENT_CUSTOM_API_KEY` as a GitHub secret.
@@ -150,7 +150,7 @@ The same mechanism works for the Event Handler. Set these in `.env`:
 ```bash
 LLM_PROVIDER=custom
 LLM_MODEL=qwen3:8b
-OPENAI_BASE_URL=http://localhost:11434/v1
+CUSTOM_OPENAI_BASE_URL=http://localhost:11434/v1
 ```
 
 If the endpoint requires an API key, also set `CUSTOM_API_KEY` in `.env`. Restart your server after changes.
@@ -162,6 +162,6 @@ If the endpoint requires an API key, also set `CUSTOM_API_KEY` in `.env`. Restar
 | Event Handler model (chat, Telegram, webhooks, summaries) | `.env` on your server | `LLM_PROVIDER`, `LLM_MODEL`, + provider API key |
 | Default job model | GitHub repo variables | `LLM_PROVIDER`, `LLM_MODEL` (set via `npx thepopebot set-var`) |
 | Per-job override | `config/CRONS.json` or `config/TRIGGERS.json` | `llm_provider`, `llm_model` on the entry |
-| Custom provider endpoint | GitHub repo variable (jobs) or `.env` (Event Handler) | `OPENAI_BASE_URL` |
+| Custom provider endpoint | GitHub repo variable (jobs) or `.env` (Event Handler) | `CUSTOM_OPENAI_BASE_URL` |
 | Custom provider API key | GitHub secret (jobs) or `.env` (Event Handler) | `AGENT_CUSTOM_API_KEY` / `CUSTOM_API_KEY` |
 | Self-hosted runner for local models | GitHub repo variable | `RUNS_ON=self-hosted` |

@@ -49,7 +49,7 @@ Set in `.env` in your project root. These configure the **Event Handler** (web c
 | `LLM_MAX_TOKENS` | Max tokens for LLM responses | No (default: 4096) |
 | `ANTHROPIC_API_KEY` | Anthropic API key | For anthropic provider |
 | `OPENAI_API_KEY` | OpenAI API key / Whisper | For openai provider |
-| `OPENAI_BASE_URL` | Custom OpenAI-compatible base URL | For custom provider |
+| `CUSTOM_OPENAI_BASE_URL` | Custom OpenAI-compatible base URL | For custom provider |
 | `GOOGLE_API_KEY` | Google API key | For google provider |
 | `CUSTOM_API_KEY` | Custom provider API key | For custom provider |
 | `AGENT_BACKEND` | Agent runner: `pi` or `claude-code` | No (default: `claude-code`) |
@@ -73,7 +73,7 @@ You can run different models for each. For example, Claude for interactive chat 
 | `anthropic` (default) | `claude-sonnet-4-20250514` | `ANTHROPIC_API_KEY` |
 | `openai` | `gpt-4o` | `OPENAI_API_KEY` |
 | `google` | `gemini-2.5-pro` | `GOOGLE_API_KEY` |
-| `custom` | Any OpenAI-compatible API | `CUSTOM_API_KEY` + `OPENAI_BASE_URL` |
+| `custom` | Any OpenAI-compatible API | `CUSTOM_API_KEY` + `CUSTOM_OPENAI_BASE_URL` |
 
 ### Setting the Event Handler Model
 
@@ -117,14 +117,14 @@ Point at any OpenAI-compatible endpoint (DeepSeek, Ollama, Together AI, etc.):
 # Cloud custom (DeepSeek, Together AI, etc.)
 npx thepopebot set-var LLM_PROVIDER custom
 npx thepopebot set-var LLM_MODEL deepseek-chat
-npx thepopebot set-var OPENAI_BASE_URL https://api.deepseek.com/v1
+npx thepopebot set-var CUSTOM_OPENAI_BASE_URL https://api.deepseek.com/v1
 npx thepopebot set-agent-secret CUSTOM_API_KEY sk-...
 
 # Local custom (Ollama, LM Studio, etc.) — needs self-hosted runner
 npx thepopebot set-var RUNS_ON self-hosted
 npx thepopebot set-var LLM_PROVIDER custom
 npx thepopebot set-var LLM_MODEL qwen3:8b
-npx thepopebot set-var OPENAI_BASE_URL http://host.docker.internal:11434/v1
+npx thepopebot set-var CUSTOM_OPENAI_BASE_URL http://host.docker.internal:11434/v1
 ```
 
 ---

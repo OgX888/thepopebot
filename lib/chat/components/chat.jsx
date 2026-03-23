@@ -12,12 +12,12 @@ import { DiffViewer } from './diff-viewer.js';
 import { cn } from '../utils.js';
 
 const fetchRepositories = () =>
-  fetch('/stream/repositories')
+  fetch('/code/repositories')
     .then(r => r.json())
     .catch(() => []);
 
 const fetchBranches = (repoFullName) =>
-  fetch(`/stream/branches?repo=${encodeURIComponent(repoFullName)}`)
+  fetch(`/code/branches?repo=${encodeURIComponent(repoFullName)}`)
     .then(r => r.json())
     .catch(() => []);
 
@@ -50,7 +50,7 @@ export function Chat({ chatId, initialMessages = [], workspace = null }) {
   // Fetch default repo for agent mode on mount
   // Uses fetch instead of server action to avoid Next.js page revalidation
   useEffect(() => {
-    fetch('/stream/default-repo')
+    fetch('/code/default-repo')
       .then(res => res.json())
       .then(({ repo: r }) => {
         if (r) {
@@ -116,7 +116,7 @@ export function Chat({ chatId, initialMessages = [], workspace = null }) {
     const isMount = prevStatus.current === status;
     const isFinished = prevStatus.current !== 'ready' && status === 'ready';
     if (isMount || isFinished) {
-      fetch(`/stream/workspace-diff/${workspaceState.id}`)
+      fetch(`/code/workspace-diff/${workspaceState.id}`)
         .then(r => r.json())
         .then(r => { if (r.success) setDiffStats(r); })
         .catch(() => {});
@@ -231,7 +231,7 @@ export function Chat({ chatId, initialMessages = [], workspace = null }) {
   const handleBranchChange = useCallback((newBranch) => {
     setBranch(newBranch);
     if (workspaceState?.id) {
-      fetch('/stream/workspace-branch', {
+      fetch('/code/workspace-branch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ workspaceId: workspaceState.id, branch: newBranch }),
@@ -242,7 +242,7 @@ export function Chat({ chatId, initialMessages = [], workspace = null }) {
   const handleDiffStatsRefresh = useCallback(async () => {
     if (!workspaceState?.id) return null;
     try {
-      const r = await fetch(`/stream/workspace-diff/${workspaceState.id}`);
+      const r = await fetch(`/code/workspace-diff/${workspaceState.id}`);
       const data = await r.json();
       if (data.success) { setDiffStats(data); return data; }
     } catch {}

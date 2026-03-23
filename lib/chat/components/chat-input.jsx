@@ -4,7 +4,7 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import { SendIcon, StopIcon, PaperclipIcon, XIcon, FileTextIcon, MicIcon } from './icons.js';
 import { useVoiceInput } from '../../voice/use-voice-input.js';
 const getVoiceTokenFetch = () =>
-  fetch('/stream/voice-token').then(r => r.json()).catch(() => ({ error: 'Failed to get voice token' }));
+  fetch('/chat/voice-token').then(r => r.json()).catch(() => ({ error: 'Failed to get voice token' }));
 import { VoiceBars } from './voice-bars.jsx';
 import { cn } from '../utils.js';
 
@@ -46,6 +46,7 @@ export function ChatInput({ input, setInput, onSubmit, status, stop, files, setF
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
+  const [partialText, setPartialText] = useState('');
   const dropdownRef = useRef(null);
   const isStreaming = status === 'streaming' || status === 'submitted';
   const volumeRef = useRef(0);
@@ -59,6 +60,7 @@ export function ChatInput({ input, setInput, onSubmit, status, stop, files, setF
         return prev + (needsSpace ? ' ' : '') + text;
       });
     },
+    onPartialTranscript: (text) => setPartialText(text),
     onError: (err) => console.error('[voice]', err),
   });
 
@@ -114,8 +116,13 @@ export function ChatInput({ input, setInput, onSubmit, status, stop, files, setF
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    if (disabled || (!input.trim() && files.length === 0) || isStreaming) return;
+    if (disabled || (!input.trim() && !partialText.trim() && files.length === 0) || isStreaming) return;
     if (canSendOverride !== undefined && !canSendOverride) return;
+    if (partialText) {
+      const needsSpace = input && !input.endsWith(' ');
+      setInput(input + (needsSpace ? ' ' : '') + partialText);
+    }
+    setPartialText('');
     onSubmit();
   };
 
@@ -214,8 +221,8 @@ export function ChatInput({ input, setInput, onSubmit, status, stop, files, setF
 
           <textarea
             ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
+            value={input + (partialText ? (input && !input.endsWith(' ') ? ' ' : '') + partialText : '')}
+            onChange={(e) => { setInput(e.target.value); setPartialText(''); }}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             rows={1}
@@ -326,6 +333,24 @@ export function ChatInput({ input, setInput, onSubmit, status, stop, files, setF
             </div>
 
             <div className="flex items-center gap-1">
+              {voiceAvailable && !isStreaming && (
+                <button
+                  type="button"
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={isConnecting}
+                  className={cn(
+                    'inline-flex items-center justify-center rounded-lg p-2.5',
+                    isConnecting
+                      ? 'bg-muted-foreground/20 text-muted-foreground cursor-wait animate-pulse'
+                      : isRecording
+                        ? 'bg-destructive text-white hover:opacity-80'
+                        : 'bg-background text-foreground border border-border hover:bg-muted'
+                  )}
+                  aria-label={isConnecting ? 'Connecting...' : isRecording ? 'Stop recording' : 'Start voice input'}
+                >
+                  {isRecording ? <VoiceBars volumeRef={volumeRef} isRecording={isRecording} /> : <MicIcon size={16} />}
+                </button>
+              )}
               {isStreaming ? (
                 <button
                   type="button"
@@ -348,24 +373,6 @@ export function ChatInput({ input, setInput, onSubmit, status, stop, files, setF
                   aria-label="Send message"
                 >
                   <SendIcon size={16} />
-                </button>
-              )}
-              {voiceAvailable && !isStreaming && (
-                <button
-                  type="button"
-                  onClick={isRecording ? stopRecording : startRecording}
-                  disabled={isConnecting}
-                  className={cn(
-                    'inline-flex items-center justify-center rounded-lg p-2.5',
-                    isConnecting
-                      ? 'bg-muted-foreground/20 text-muted-foreground cursor-wait animate-pulse'
-                      : isRecording
-                        ? 'bg-destructive text-white hover:opacity-80'
-                        : 'bg-background text-foreground border border-border hover:bg-muted'
-                  )}
-                  aria-label={isConnecting ? 'Connecting...' : isRecording ? 'Stop recording' : 'Start voice input'}
-                >
-                  {isRecording ? <VoiceBars volumeRef={volumeRef} isRecording={isRecording} /> : <MicIcon size={16} />}
                 </button>
               )}
             </div>

@@ -23,7 +23,7 @@ export function DiffViewer({ workspaceId, diffStats, onClose }) {
   const diffRef = useRef(null);
 
   useEffect(() => {
-    fetch(`/stream/workspace-diff/${workspaceId}/full`)
+    fetch(`/code/workspace-diff/${workspaceId}/full`)
       .then(r => r.json())
       .then(r => {
         if (!r.success || !r.diff) {

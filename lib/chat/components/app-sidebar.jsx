@@ -32,7 +32,7 @@ export function AppSidebar({ user }) {
   // Fetch badge counts (notifications + PRs) — run immediately, then every 10 minutes
   useEffect(() => {
     function fetchCounts() {
-      fetch('/stream/sidebar-counts')
+      fetch('/chats/counts')
         .then(r => r.json())
         .then(({ notifications, pullRequests }) => {
           setUnreadCount(notifications || 0);
@@ -47,7 +47,7 @@ export function AppSidebar({ user }) {
 
   // Version check — one-time on mount
   useEffect(() => {
-    fetch('/stream/app-version')
+    fetch('/admin/app-version')
       .then(r => r.json())
       .then(({ version, updateAvailable, changelog }) => {
         setVersion(version);

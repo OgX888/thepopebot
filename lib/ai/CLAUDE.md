@@ -30,7 +30,7 @@ Two agent singletons, both using `createReactAgent` from `@langchain/langgraph/p
 | Anthropic | `anthropic` (default) | `claude-sonnet-4-20250514` | `ANTHROPIC_API_KEY` |
 | OpenAI | `openai` | `gpt-4o` | `OPENAI_API_KEY` |
 | Google | `google` | `gemini-2.5-flash` | `GOOGLE_API_KEY` |
-| Custom | `custom` | — | `OPENAI_BASE_URL`, `CUSTOM_API_KEY` (optional) |
+| Custom | `custom` | — | `CUSTOM_OPENAI_BASE_URL`, `CUSTOM_API_KEY` (optional) |
 
 `LLM_MAX_TOKENS` defaults to 4096.
 

@@ -20,3 +20,15 @@ Middleware can't intercept WebSocket upgrades. `ws-proxy.js` authenticates direc
 ## Server Actions
 
 All actions use `requireAuth()` with ownership checks: `getCodeWorkspaces()`, `createCodeWorkspace()`, `renameCodeWorkspace()`, `starCodeWorkspace()`, `deleteCodeWorkspace()`, `ensureCodeWorkspaceContainer()`.
+
+## Multi-Agent Backends
+
+Code workspaces support multiple coding agent backends, selected via the `codingAgent` column on the `codeWorkspaces` table (defaults to `claude-code`).
+
+**Supported agents**: `claude-code`, `pi`, `gemini-cli`, `codex-cli`, `opencode`. Each uses a different Docker image variant (`docker/coding-agent/Dockerfile.*`) and agent-specific setup/auth scripts in `docker/coding-agent/scripts/`.
+
+**Agent selection**: Users configure agents via the Coding Agents admin page (`/admin/event-handler/coding-agents`). The `codingAgent` value is passed to `runInteractiveContainer()` which selects the appropriate Docker image and runtime scripts.
+
+**Container streaming**: `lib/containers/stream.js` provides an SSE endpoint (`/stream/containers`) that polls Docker for container stats every 3 seconds. Used by the Containers admin page for live monitoring.
+
+**Backend API in messages**: When an agent produces output, the `backendApi` field in message chunks identifies which agent backend generated the response.

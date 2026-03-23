@@ -19,8 +19,8 @@ thepopebot includes these security measures by default:
 
 ### How It Works
 
-1. `run-job.yml` collects `AGENT_*` GitHub secrets into a `SECRETS` JSON env var
-2. The container entrypoint decodes the JSON and exports each key
+1. The event handler passes agent job secrets directly to the Docker container via `buildAgentAuthEnv()`
+2. The container entrypoint exports each key into the environment
 3. The `env-sanitizer` extension filters ALL secret keys from the LLM's bash subprocess env
 4. SDKs (Anthropic, GitHub CLI) read their keys from `process.env` normally
 5. The LLM cannot `echo $ANYTHING` — subprocess env is filtered

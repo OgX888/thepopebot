@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MessageIcon, CodeIcon, TrashIcon, MoreHorizontalIcon, StarIcon, StarFilledIcon, PencilIcon } from './icons.js';
+import { AgentIcon, CodeIcon, TrashIcon, MoreHorizontalIcon, StarIcon, StarFilledIcon, PencilIcon } from './icons.js';
 import { SidebarMenuButton, SidebarMenuItem, useSidebar } from './ui/sidebar.js';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './ui/dropdown-menu.js';
 import { ConfirmDialog } from './ui/confirm-dialog.js';
@@ -45,7 +45,7 @@ export function SidebarHistoryItem({ chat, isActive, onDelete, onStar, onRename 
               <CodeIcon size={14} />
               {chat.hasChanges ? <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-destructive" /> : null}
             </span>
-          ) : <MessageIcon size={14} />}
+          ) : <AgentIcon size={14} />}
           <span className="truncate flex-1">
             {chat.title}
           </span>

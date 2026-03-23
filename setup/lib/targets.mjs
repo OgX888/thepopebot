@@ -28,7 +28,7 @@ export const CONFIG_TARGETS = {
   // Plain config → DB (not .env)
   LLM_PROVIDER:          { db: true, variable: true },
   LLM_MODEL:             { db: true, variable: true },
-  OPENAI_BASE_URL:       { db: true, variable: true },
+  CUSTOM_OPENAI_BASE_URL: { db: true, variable: true },
   AGENT_BACKEND:         { db: true, variable: true },
   TELEGRAM_CHAT_ID:      { db: true },
   TELEGRAM_VERIFICATION: { db: true },

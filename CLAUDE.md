@@ -52,6 +52,7 @@ Files in managed directories are auto-synced (created, updated, **and deleted**)
 │   ├── chat/                   # Chat route handler, server actions, React UI components
 │   ├── cluster/                # Worker clusters (roles, triggers, Docker containers)
 │   ├── code/                   # Code workspaces (server actions, terminal view, WebSocket proxy)
+│   ├── containers/             # Container SSE streaming (Docker container status)
 │   ├── db/                     # SQLite via Drizzle (schema, migrations, api-keys)
 │   ├── tools/                  # Job creation, GitHub API, Telegram, Docker, Whisper
 │   ├── voice/                  # Voice input (AssemblyAI streaming transcription)
@@ -98,19 +99,19 @@ SQLite via Drizzle ORM at `data/thepopebot.sqlite` (override with `DATABASE_PATH
 - **NEVER** modify `initDatabase()` to add schema changes
 - **ALWAYS** make schema changes by editing `lib/db/schema.js` then running `npm run db:generate`
 
-## Security: /api vs Server Actions
+## Security: Route Architecture
 
 **`/api` routes are for external callers only.** They authenticate via `x-api-key` header or webhook secrets (Telegram, GitHub). Never add session/cookie auth to `/api` routes.
 
-**Browser UI uses Server Actions.** All authenticated browser-to-server calls MUST use Next.js Server Actions (`'use server'` functions in `lib/chat/actions.js` or `lib/auth/actions.js`), not `/api` fetch calls. Server Actions use the `requireAuth()` pattern which validates the session cookie internally.
+**Browser UI uses fetch route handlers colocated with pages.** All authenticated browser-to-server calls use Next.js route handlers (`route.js` files in `web/app/`) that check `auth()` session. Do NOT use server actions for data fetching — they cause page refresh issues. Handler implementations live in `lib/chat/api.js`; route files are thin re-exports.
 
-**Exception: chat streaming.** The AI SDK's `DefaultChatTransport` requires an HTTP endpoint. Chat has its own route handler at `lib/chat/api.js` (mapped to `/stream/chat`) with session auth, outside `/api`.
+**`/stream/*` is for actual SSE streaming only.** Three endpoints use Server-Sent Events: `/stream/chat` (AI SDK streaming), `/stream/containers` (Docker container status), `/stream/cluster/[clusterId]/logs` (cluster logs). All other fetch routes are colocated with their page directories.
 
 | Caller | Mechanism | Auth | Location |
 |--------|-----------|------|----------|
 | External (cURL, GitHub Actions, Telegram) | `/api` route handler | `x-api-key` or webhook secret | `api/index.js` |
-| Browser UI (data/mutations) | Server Action | `requireAuth()` session check | `lib/chat/actions.js`, `lib/auth/actions.js` |
-| Browser UI (chat streaming) | Dedicated route handler | `auth()` session check | `lib/chat/api.js` |
+| Browser UI (data/mutations) | Fetch route handler colocated with page | `auth()` session check | `web/app/<page>/route.js` |
+| Browser UI (SSE streaming) | EventSource / AI SDK streaming | `auth()` session check | `web/app/stream/` |
 
 ## Action Dispatch System
 
