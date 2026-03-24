@@ -120,7 +120,6 @@ Pass whichever key(s) your agent/provider needs:
 
 | Variable | Purpose |
 |----------|---------|
-| `CHAT_CONTEXT` | JSON planning conversation for SessionStart hook |
 | `PORT` | ttyd port (default: 7681) |
 
 ### Cluster-Worker Runtime

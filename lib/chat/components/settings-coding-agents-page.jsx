@@ -563,8 +563,8 @@ function CodexCliCard({ settings, onReload }) {
           ) : (
             <CredentialHint
               ready={config.codexKeySet}
-              readyText="Codex API Key is set"
-              missingText="Set your Codex API Key on the LLMs page"
+              readyText="OpenAI API Key is set"
+              missingText="Set your OpenAI API Key on the LLMs page"
             />
           )}
 

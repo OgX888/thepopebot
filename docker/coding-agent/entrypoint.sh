@@ -58,7 +58,6 @@ set -e
 #
 # ── INTERACTIVE RUNTIME ──────────────────────────────────────────────
 #
-#   CHAT_CONTEXT        JSON planning conversation for SessionStart hook
 #   PORT                ttyd port (default: 7681)
 #
 # ── CLUSTER-WORKER RUNTIME ───────────────────────────────────────────

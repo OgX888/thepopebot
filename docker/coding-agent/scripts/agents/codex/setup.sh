@@ -1,5 +1,5 @@
 #!/bin/bash
-# Codex CLI setup — system prompt + Playwright MCP
+# Codex CLI setup — config, system prompt, Playwright MCP
 
 WORKSPACE_DIR=$(pwd)
 
@@ -10,5 +10,18 @@ else
     rm -f "${WORKSPACE_DIR}/AGENTS.md"
 fi
 
-# Register Playwright MCP server for browser automation
-codex mcp add playwright -- npx -y @playwright/mcp@latest --headless --browser chromium 2>/dev/null || true
+# Pre-configure trust, model, and MCP to skip interactive prompts
+mkdir -p ~/.codex
+
+CODEX_MODEL="${LLM_MODEL:-gpt-5.4}"
+
+cat > ~/.codex/config.toml << EOF
+model = "${CODEX_MODEL}"
+
+[projects."${WORKSPACE_DIR}"]
+trust_level = "trusted"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest", "--headless", "--browser", "chromium"]
+EOF

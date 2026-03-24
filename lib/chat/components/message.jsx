@@ -160,7 +160,7 @@ function ToolCall({ part, className }) {
                 if (o?.codingAgent || o?.backendApi) {
                   return (
                     <span className="text-xs text-muted-foreground">
-                      {o.codingAgent}{o.backendApi ? ` · ${o.backendApi}` : ''}
+                      {o.backendApi || o.codingAgent}
                     </span>
                   );
                 }
