@@ -20,5 +20,5 @@ if [ -f "$SESSION_FILE" ]; then
 fi
 
 # Start tmux session with Claude, then attach
-tmux -u new-session -d -s "$SESSION_NAME" -c /home/coding-agent/workspace $CLAUDE_ARGS
+tmux -u new-session -d -s "$SESSION_NAME" -e PORT="${PORT}" -c /home/coding-agent/workspace $CLAUDE_ARGS
 exec tmux attach -t "$SESSION_NAME"
