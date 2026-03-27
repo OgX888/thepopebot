@@ -21,6 +21,18 @@ export function SettingsGeneralPage({ session }) {
   }, []);
 
   const [showBetaConfirm, setShowBetaConfirm] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [checkResult, setCheckResult] = useState(null);
+
+  const handleCheckForUpdates = async () => {
+    setChecking(true);
+    setCheckResult(null);
+    const res = await fetch('/admin/app-version', { method: 'POST' });
+    const data = await res.json();
+    setChecking(false);
+    setCheckResult(data.updateAvailable ? 'updated' : 'current');
+    setTimeout(() => setCheckResult(null), 3000);
+  };
 
   const handleToggle = async () => {
     if (!includeBeta) {
@@ -59,6 +71,22 @@ export function SettingsGeneralPage({ session }) {
           <p className="text-sm text-muted-foreground">
           Configure how the system checks for new versions.
           </p>
+        </div>
+
+        <div className="flex items-center gap-3 mb-3">
+          <button
+            onClick={handleCheckForUpdates}
+            disabled={checking}
+            className="px-3 py-1.5 text-sm font-medium rounded-md bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 transition-colors"
+          >
+            {checking ? 'Checking...' : 'Check for Updates'}
+          </button>
+          {checkResult === 'updated' && (
+            <span className="text-sm text-green-500">Update found</span>
+          )}
+          {checkResult === 'current' && (
+            <span className="text-sm text-muted-foreground">Already up to date</span>
+          )}
         </div>
 
         <div className="rounded-lg border bg-card p-4">
