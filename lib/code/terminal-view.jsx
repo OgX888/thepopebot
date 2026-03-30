@@ -524,6 +524,11 @@ export default function TerminalView({ codeWorkspaceId, wsPath, isActive = true,
           color: #ef4444 !important;
           background: rgba(239,68,68,0.12) !important;
         }
+        @media (max-width: 767px) {
+          .code-toolbar-right {
+            overflow-x: auto;
+          }
+        }
         .code-voice-dialog {
           position: absolute;
           bottom: 100%;
@@ -694,7 +699,7 @@ export default function TerminalView({ codeWorkspaceId, wsPath, isActive = true,
                 {themeLabel}
               </button>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflowX: 'auto' }} className="scrollbar-hide">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }} className="code-toolbar-right scrollbar-hide">
               {voiceAvailable && (
                 <div ref={voiceDialogRef} style={{ position: 'relative' }}>
                   <button

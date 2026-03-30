@@ -73,11 +73,31 @@ function ActiveConfig({ settings, onSave }) {
   const initialized = useRef(false);
   const saveTimer = useRef(null);
 
+  const availableProviders = [];
+  if (settings?.builtinProviders && settings?.credentialStatuses) {
+    const statusMap = new Map(settings.credentialStatuses.map((s) => [s.key, s.isSet]));
+    for (const [slug, prov] of Object.entries(settings.builtinProviders)) {
+      const hasKey = prov.credentials.some((c) => statusMap.get(c.key));
+      if (hasKey) {
+        availableProviders.push({ slug, name: prov.name, models: prov.models });
+      }
+    }
+  }
+  if (settings?.customProviders) {
+    for (const cp of settings.customProviders) {
+      availableProviders.push({ slug: cp.key, name: cp.name, models: cp.models.map((m) => ({ id: m, name: m })) });
+    }
+  }
+
   useEffect(() => {
     if (settings?.active) {
-      setProvider(settings.active.provider || 'anthropic');
-      setModel(settings.active.model || '');
-      setModelText(settings.active.model || '');
+      const prov = settings.active.provider || availableProviders[0]?.slug || '';
+      const resolved = availableProviders.find((p) => p.slug === prov);
+      const models = resolved?.models || [];
+      const def = models.find((m) => m.default);
+      setProvider(prov);
+      setModel(settings.active.model || def?.id || models[0]?.id || '');
+      setModelText(settings.active.model || def?.id || models[0]?.id || '');
       setMaxTokens(settings.active.maxTokens || '4096');
       setTimeout(() => { initialized.current = true; }, 100);
     }
@@ -98,22 +118,6 @@ function ActiveConfig({ settings, onSave }) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => doSave(p, m, mt, ws), 800);
   }, [doSave]);
-
-  const availableProviders = [];
-  if (settings?.builtinProviders && settings?.credentialStatuses) {
-    const statusMap = new Map(settings.credentialStatuses.map((s) => [s.key, s.isSet]));
-    for (const [slug, prov] of Object.entries(settings.builtinProviders)) {
-      const hasKey = prov.credentials.some((c) => statusMap.get(c.key));
-      if (hasKey) {
-        availableProviders.push({ slug, name: prov.name, models: prov.models });
-      }
-    }
-  }
-  if (settings?.customProviders) {
-    for (const cp of settings.customProviders) {
-      availableProviders.push({ slug: cp.key, name: cp.name, models: cp.models.map((m) => ({ id: m, name: m })) });
-    }
-  }
 
   const selectedProvider = availableProviders.find((p) => p.slug === provider);
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-# OpenCode setup — write system prompt + Playwright MCP
+# OpenCode setup — session tracking plugin, system prompt, Playwright MCP
 
 WORKSPACE_DIR=$(pwd)
 
@@ -10,9 +10,45 @@ else
     rm -f "${WORKSPACE_DIR}/AGENTS.md"
 fi
 
-# Register Playwright MCP server for browser automation
-cat > "${WORKSPACE_DIR}/.opencode.json" << 'EOF'
+# Create session tracker plugin
+mkdir -p "${WORKSPACE_DIR}/.opencode/plugins"
+
+cat > "${WORKSPACE_DIR}/.opencode/plugins/package.json" << 'EOF'
 {
+  "name": "opencode-session-tracker",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "session-tracker.mjs",
+  "oc-plugin": ["server"]
+}
+EOF
+
+cat > "${WORKSPACE_DIR}/.opencode/plugins/session-tracker.mjs" << 'PLUGIN'
+export const SessionTracker = async ({ $ }) => {
+  const fs = await import("fs");
+  const path = await import("path");
+  const dir = "/home/coding-agent/.opencode-ttyd-sessions";
+  const port = process.env.PORT || "7681";
+  const file = path.join(dir, port);
+  let captured = false;
+
+  return {
+    event: async ({ event }) => {
+      if (captured) return;
+      const sessionID = event?.properties?.sessionID;
+      if (!sessionID) return;
+      captured = true;
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(file, sessionID);
+    }
+  }
+}
+PLUGIN
+
+# OpenCode config: register plugin + Playwright MCP
+cat > "${WORKSPACE_DIR}/.opencode/opencode.jsonc" << 'EOF'
+{
+  "plugin": ["./plugins"],
   "mcpServers": {
     "playwright": {
       "type": "stdio",
@@ -23,3 +59,6 @@ cat > "${WORKSPACE_DIR}/.opencode.json" << 'EOF'
   }
 }
 EOF
+
+# Remove old root-level config if it exists
+rm -f "${WORKSPACE_DIR}/.opencode.json"

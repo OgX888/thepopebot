@@ -3,7 +3,7 @@ FROM ${BASE_IMAGE}
 
 USER root
 
-RUN npm install -g opencode-ai@latest
+RUN npm install -g opencode-ai@latest bun
 
 USER coding-agent
 

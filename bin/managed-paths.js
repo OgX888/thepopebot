@@ -13,7 +13,7 @@ export const MANAGED_PATHS = [
   'skills/CLAUDE.md',
   'cron/CLAUDE.md',
   'triggers/CLAUDE.md',
-  'docs/CLAUDE.md',
+  'docs/',
 ];
 
 export function isManaged(relPath) {
