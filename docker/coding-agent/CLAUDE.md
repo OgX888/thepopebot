@@ -222,6 +222,33 @@ Add a new entry to `CODING_AGENTS` array so the image gets built.
 
 Add auth env var logic in `buildAgentAuthEnv()` for the new agent.
 
+### 5. Register config keys in `lib/config.js`
+
+**CRITICAL**: Add all new config keys to THREE places in `lib/config.js`:
+
+1. **`CONFIG_KEYS` set** — without this, `getConfig()` silently returns `undefined` even though `setConfigValue()` writes to the DB successfully. The write works but the read is gated by this allowlist.
+2. **`DEFAULTS` object** — set `CODING_AGENT_<NAME>_ENABLED` default to `'false'`.
+3. **`SECRET_KEYS` set** — only if the agent has secret credentials stored in the DB.
+
+For a multi-provider agent, add these keys:
+```
+CODING_AGENT_<NAME>_ENABLED
+CODING_AGENT_<NAME>_PROVIDER
+CODING_AGENT_<NAME>_MODEL
+```
+
+### 6. Register in settings UI
+
+Add the agent to `lib/chat/components/settings-coding-agents-page.jsx`:
+- Add card component (use `OpenCodeCard` as template for multi-provider agents)
+- Add `isAgentReady()` function
+- Add to the `available` list in `DefaultAgentSection`
+- Add to `AgentCards` render
+
+And in `lib/chat/actions.js`:
+- Add config reads in `getCodingAgentSettings()`
+- Add config writes in `updateCodingAgentConfig()`
+
 ## Session Tracking
 
 Session tracking enables `CONTINUE_SESSION=1` — resuming the exact same conversation across container restarts and isolating sessions per terminal tab.

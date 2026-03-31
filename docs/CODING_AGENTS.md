@@ -81,7 +81,7 @@ Claude Code natively only supports Anthropic models. thepopebot extends this via
 
 **Anthropic-compatible endpoints**: Providers that expose an Anthropic-format API (DeepSeek, MiniMax, Kimi, OpenRouter) can be used directly. The system sets `ANTHROPIC_BASE_URL` to the provider's endpoint.
 
-**LiteLLM proxy**: Providers that only offer OpenAI-format APIs (OpenAI, Google, Mistral, xAI) are routed through a LiteLLM sidecar container that translates between API formats. To use these, add `docker-compose.litellm.yml` to your setup.
+**LiteLLM proxy**: Providers that only offer OpenAI-format APIs (OpenAI, Google, Mistral, xAI) are routed through the LiteLLM sidecar container that translates between API formats. LiteLLM is included in both the default and SSL Docker Compose configurations.
 
 This means Claude Code can be powered by almost any LLM provider, not just Anthropic.
 

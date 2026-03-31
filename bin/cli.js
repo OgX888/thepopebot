@@ -52,6 +52,7 @@ Commands:
   init                              Scaffold a new thepopebot project
   upgrade|update [@beta|version]    Upgrade thepopebot (install, init, build, commit, push)
   setup                             Run interactive setup wizard
+  setup-ssl                         Configure SSL with Let's Encrypt wildcard cert
   setup-telegram                    Reconfigure Telegram webhook
   reset-auth                        Regenerate AUTH_SECRET (invalidates all sessions)
   reset [file]                      Restore a template file (or list available templates)
@@ -338,8 +339,7 @@ AUTH_TRUST_HOST=true
 DATABASE_PATH=data/db/thepopebot.sqlite
 THEPOPEBOT_VERSION=${version}
 
-# Uncomment to use a custom docker-compose file that won't be overwritten by upgrades.
-# Edit docker-compose.custom.yml with your changes, then uncomment:
+# To enable SSL with Let's Encrypt, run: npx thepopebot setup-ssl
 # COMPOSE_FILE=docker-compose.custom.yml
 `;
     fs.writeFileSync(envPath, seedEnv);
@@ -484,6 +484,15 @@ function copyDirSyncForce(src, dest, templateRelBase = '') {
 
 function setup() {
   const setupScript = path.join(__dirname, '..', 'setup', 'setup.mjs');
+  try {
+    execFileSync(process.execPath, [setupScript], { stdio: 'inherit', cwd: process.cwd() });
+  } catch {
+    process.exit(1);
+  }
+}
+
+function setupSsl() {
+  const setupScript = path.join(__dirname, '..', 'setup', 'setup-ssl.mjs');
   try {
     execFileSync(process.execPath, [setupScript], { stdio: 'inherit', cwd: process.cwd() });
   } catch {
@@ -770,6 +779,9 @@ switch (command) {
     break;
   case 'setup':
     setup();
+    break;
+  case 'setup-ssl':
+    setupSsl();
     break;
   case 'setup-telegram':
     setupTelegram();

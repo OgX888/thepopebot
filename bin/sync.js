@@ -367,10 +367,18 @@ export async function syncFast(projectPath) {
   console.log('\n  Copying web source into container...');
   execSync(`docker cp ${path.join(webDir, 'app')} ${container}:/app/app`, { stdio: 'inherit' });
   execSync(`docker cp ${path.join(webDir, 'postcss.config.mjs')} ${container}:/app/postcss.config.mjs`, { stdio: 'inherit' });
+  execSync(`docker cp ${path.join(webDir, 'next.config.mjs')} ${container}:/app/next.config.mjs`, { stdio: 'inherit' });
 
   // 6. Run next build inside the container
+  // Hide data/logs dirs so webpack's FileSystemInfo doesn't crawl them (causes OOM/RangeError
+  // when workspaces contain thousands of files). Restored immediately after build.
   console.log('\n  Building Next.js inside container...');
-  execSync(`docker exec ${container} ./node_modules/.bin/next build`, { stdio: 'inherit' });
+  execSync(`docker exec ${container} sh -c 'mv /app/data /app/.data-build-tmp 2>/dev/null; mv /app/logs /app/.logs-build-tmp 2>/dev/null; true'`, { stdio: 'inherit' });
+  try {
+    execSync(`docker exec ${container} ./node_modules/.bin/next build`, { stdio: 'inherit' });
+  } finally {
+    execSync(`docker exec ${container} sh -c 'mv /app/.data-build-tmp /app/data 2>/dev/null; mv /app/.logs-build-tmp /app/logs 2>/dev/null; true'`, { stdio: 'inherit' });
+  }
 
   // 7. Clean up web source from container (not needed at runtime)
   execSync(`docker exec ${container} rm -rf /app/app`, { stdio: 'inherit' });

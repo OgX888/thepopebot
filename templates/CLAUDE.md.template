@@ -36,8 +36,7 @@ project-root/
 │
 ├── .github/workflows/                 # GitHub Actions
 ├── docker-compose.yml                 # Docker Compose config (MANAGED)
-├── docker-compose.custom.yml          # User-owned compose overrides (not managed)
-├── traefik-dynamic.yml.example        # Traefik TLS config template (not managed)
+├── docker-compose.custom.yml          # SSL compose with Let's Encrypt (not managed)
 ├── skills/                            # All available agent skills
 │   └── active/                        # Symlinks to active skills (shared by Pi + Claude Code)
 ├── .pi/skills → skills/active         # Pi reads skills from here
@@ -343,7 +342,7 @@ Synced during setup for GitHub Actions workflows. The event handler reads creden
 
 The following paths are auto-synced by `thepopebot init` and `thepopebot upgrade`. **Do not edit them** — changes will be overwritten on package updates: `.github/workflows/`, `docker-compose.yml`, `.dockerignore`, `.gitignore`, `CLAUDE.md`, `config/CLAUDE.md`, `skills/CLAUDE.md`, `cron/CLAUDE.md`, `triggers/CLAUDE.md`, `docs/CLAUDE.md`.
 
-To customize Docker Compose config without losing changes on upgrade, set `COMPOSE_FILE=docker-compose.custom.yml` in `.env`. The custom file is scaffolded by init but never overwritten.
+To enable SSL with Let's Encrypt wildcard cert, run `npx thepopebot setup-ssl`. This configures `docker-compose.custom.yml` (not managed, never overwritten).
 
 The Next.js app and `.next` build output are baked into the Docker image — they do not exist in user projects.
 
@@ -351,7 +350,7 @@ The Next.js app and `.next` build output are baked into the Docker image — the
 
 User-editable config files in `config/`: `agent-chat/SYSTEM.md` (agent chat system prompt), `code-chat/SYSTEM.md` (code workspace planning), `agent-job/SOUL.md` (personality), `agent-job/AGENT_JOB.md` (runtime docs), `agent-job/SUMMARY.md` (job summaries), `cluster/SYSTEM.md` (cluster system prompt), `cluster/ROLE.md` (cluster role prompt), `HEARTBEAT.md` (self-monitoring), `CRONS.json` (scheduled jobs), `TRIGGERS.json` (webhook triggers).
 
-To customize Docker Compose (TLS, ports, volumes, extra services), edit `docker-compose.custom.yml` and set `COMPOSE_FILE=docker-compose.custom.yml` in `.env`. For Tailscale TLS, copy `traefik-dynamic.yml.example` to `traefik-dynamic.yml` and follow the instructions inside.
+To enable SSL, run `npx thepopebot setup-ssl` — it configures Let's Encrypt wildcard cert via DNS challenge, sets up your domain, and switches to `docker-compose.custom.yml`. For additional Docker Compose customization (extra services, volumes, ports), edit `docker-compose.custom.yml` directly.
 
 Skills in `skills/` are activated by symlinking into `skills/active/`. Both `.pi/skills` and `.claude/skills` point to `skills/active/`. Scripts for command-type actions go in `cron/` and `triggers/`.
 
