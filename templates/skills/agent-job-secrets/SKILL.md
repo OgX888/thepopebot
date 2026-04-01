@@ -7,14 +7,14 @@ description: List, get, or update agent secrets. Use get for OAuth credentials (
 
 ```bash
 # List available secrets (null = must fetch, plain = already in env)
-node skills/agent-job-secrets/agent-job-secrets.js
+node skills/agent-job-secrets/agent-job-secrets.mjs
 
 # Get a secret value (OAuth credentials are auto-refreshed)
-node skills/agent-job-secrets/agent-job-secrets.js get MY_CREDENTIALS
+node skills/agent-job-secrets/agent-job-secrets.mjs get MY_CREDENTIALS
 
 # Set/update a secret (plain string or piped value)
-node skills/agent-job-secrets/agent-job-secrets.js set MY_KEY "value"
-echo "$UPDATED_CREDENTIALS" | node skills/agent-job-secrets/agent-job-secrets.js set MY_KEY
+node skills/agent-job-secrets/agent-job-secrets.mjs set MY_KEY "value"
+echo "$UPDATED_CREDENTIALS" | node skills/agent-job-secrets/agent-job-secrets.mjs set MY_KEY
 ```
 
 ## Notes
