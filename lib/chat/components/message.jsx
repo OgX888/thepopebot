@@ -157,10 +157,11 @@ function ToolCall({ part, className }) {
             {isDone && (() => {
               try {
                 const o = typeof part.output === 'string' ? JSON.parse(part.output) : part.output;
-                if (o?.codingAgent || o?.backendApi) {
+                const meta = Array.isArray(o) ? o.find(e => e.type === 'meta') : o;
+                if (meta?.codingAgent || meta?.backendApi) {
                   return (
                     <span className="text-xs text-muted-foreground">
-                      {[o.codingAgent, o.backendApi].filter(Boolean).join(' · ')}
+                      {[meta.codingAgent, meta.backendApi].filter(Boolean).join(' · ')}
                     </span>
                   );
                 }
